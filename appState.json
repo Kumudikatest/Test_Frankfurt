@@ -1,0 +1,97 @@
+{
+  "EDITOR_STATE": {
+    "allProjectFiles": {
+      "95a4ef8d-b730-4932-a6f0-6835fd096f95": {
+        "id": "95a4ef8d-b730-4932-a6f0-6835fd096f95",
+        "parent": null,
+        "name": "Test_Frankfurt",
+        "type": "DIRECTORY",
+        "isDirectory": true,
+        "children": [
+          "8f17496a-7561-445f-89db-e785a9068fce"
+        ],
+        "isRemovable": false,
+        "filePath": "Test_Frankfurt"
+      },
+      "8f17496a-7561-445f-89db-e785a9068fce": {
+        "id": "8f17496a-7561-445f-89db-e785a9068fce",
+        "parent": "95a4ef8d-b730-4932-a6f0-6835fd096f95",
+        "name": "lambda.js",
+        "type": "LAMBDA_FILE",
+        "isDirectory": false,
+        "children": [],
+        "isRemovable": true,
+        "filePath": "Test_Frankfurt/lambda.js",
+        "code": "exports.handler = function(event, context, callback) {\n    \n    callback(null, {\"message\": \"Successfully executed\"});\n}",
+        "triggers": [
+          {
+            "resourceName": "apigeuCentral1APIFrankfurt1test1any",
+            "config": {}
+          }
+        ],
+        "config": {
+          "runtime": "nodejs8.10",
+          "timeout": 60,
+          "memory": 128
+        }
+      }
+    },
+    "deletedFiles": [],
+    "rootNode": "95a4ef8d-b730-4932-a6f0-6835fd096f95",
+    "openFiles": [
+      "8f17496a-7561-445f-89db-e785a9068fce"
+    ],
+    "currentFileId": "8f17496a-7561-445f-89db-e785a9068fce",
+    "resources": {
+      "apigeuCentral1APIFrankfurt1test1any": {
+        "name": "apigeuCentral1APIFrankfurt1test1any",
+        "type": "API_GATEWAY",
+        "config": {
+          "selectedRegion": "eu-central-1",
+          "apiMode": 0,
+          "apiName": "APIFrankfurt1",
+          "endpointType": "EDGE",
+          "resourceMode": 0,
+          "resourceName": "test1",
+          "resourcePath": "/test1",
+          "restMethod": "ANY",
+          "proxyIntegration": false,
+          "enableCORS": false,
+          "stageMode": 0,
+          "stageName": "test1"
+        },
+        "globallyEditable": false
+      }
+    },
+    "envVariables": [
+      {
+        "lambdaId": "all",
+        "varKey": "SIGMA_AWS_ACC_ID",
+        "varValue": null,
+        "shouldPersist": false,
+        "displayOnly": false,
+        "editable": false
+      }
+    ],
+    "packageJSON": {
+      "dependencies": {}
+    },
+    "lambdaId": "8f17496a-7561-445f-89db-e785a9068fce"
+  },
+  "PROJECT_META": {
+    "projectName": "Test_Frankfurt",
+    "projectDescription": "Region = Frankfurt",
+    "projectVersion": "2.0.0",
+    "projectRegion": "eu-central-1",
+    "platform": "AWS",
+    "platformRegions": {},
+    "lastSave": 1547116097303
+  },
+  "VCS_STATE": {
+    "provider": "GitHub",
+    "repo": {
+      "name": "Test_Frankfurt",
+      "url": "https://github.com/Kumudikatest/Test_Frankfurt"
+    }
+  }
+}
