@@ -1,4 +1,5 @@
 let AWS = require('aws-sdk');
+const kinesis = new AWS.Kinesis();
 const cognito_idp = new AWS.CognitoIdentityServiceProvider();
 
 exports.handler = function (event, context, callback) {
@@ -12,6 +13,18 @@ exports.handler = function (event, context, callback) {
         }
         // your logic goes within this block
         console.log(data);
+
+        kinesis.describeStream({
+            StreamName: 'Test_Frankfurt'
+        }).promise()
+            .then(data => {
+                // your logic goes here
+                console.log(data);
+            })
+            .catch(err => {
+                // error handling goes here
+                console.log(err);
+            });
     });
 
     callback(null, { "message": "Successfully executed" });

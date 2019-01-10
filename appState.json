@@ -22,7 +22,7 @@
         "children": [],
         "isRemovable": true,
         "filePath": "Test_Frankfurt/lambda.js",
-        "code": "let AWS = require('aws-sdk');\nconst cognito_idp = new AWS.CognitoIdentityServiceProvider();\n\nexports.handler = function (event, context, callback) {\n    cognito_idp.listUsers({\n        UserPoolId: process.env.UserPoolId_cognitoCognitoFrankfurt1,\n        Limit: \"10\"\n    }, function (error, data) {\n        if (error) {\n            // implement error handling logic here\n            throw error;\n        }\n        // your logic goes within this block\n        console.log(data);\n    });\n\n    callback(null, { \"message\": \"Successfully executed\" });\n}",
+        "code": "let AWS = require('aws-sdk');\nconst kinesis = new AWS.Kinesis();\nconst cognito_idp = new AWS.CognitoIdentityServiceProvider();\n\nexports.handler = function (event, context, callback) {\n    cognito_idp.listUsers({\n        UserPoolId: process.env.UserPoolId_cognitoCognitoFrankfurt1,\n        Limit: \"10\"\n    }, function (error, data) {\n        if (error) {\n            // implement error handling logic here\n            throw error;\n        }\n        // your logic goes within this block\n        console.log(data);\n\n        kinesis.describeStream({\n            StreamName: 'Test_Frankfurt'\n        }).promise()\n            .then(data => {\n                // your logic goes here\n                console.log(data);\n            })\n            .catch(err => {\n                // error handling goes here\n                console.log(err);\n            });\n    });\n\n    callback(null, { \"message\": \"Successfully executed\" });\n}",
         "triggers": [
           {
             "resourceName": "apigeuCentral1APIFrankfurt1testany",
@@ -246,6 +246,18 @@
           }
         },
         "globallyEditable": true
+      },
+      "kinesisTestFrankfurt": {
+        "name": "kinesisTestFrankfurt",
+        "type": "Kinesis",
+        "config": {
+          "mode": 0,
+          "StreamName": "Test_Frankfurt",
+          "shards": 1,
+          "region": "eu-central-1",
+          "operation": "describe-stream"
+        },
+        "globallyEditable": true
       }
     },
     "envVariables": [
@@ -270,7 +282,7 @@
     "projectRegion": "eu-central-1",
     "platform": "AWS",
     "platformRegions": {},
-    "lastSave": 1547118229541
+    "lastSave": 1547118535261
   },
   "VCS_STATE": {
     "provider": "GitHub",
