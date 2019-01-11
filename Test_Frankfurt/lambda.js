@@ -15,7 +15,9 @@ exports.handler = function (event, context, callback) {
         console.log(data);
 
         kinesis.describeStream({
-            StreamName: 'Test_Frankfurt'
+            StreamName: 'Test_Frankfurt',
+            Limit: 10,
+            ExclusiveStartShardId: 'shardId-000000000000'
         }).promise()
             .then(data => {
                 // your logic goes here
