@@ -22,7 +22,7 @@
         "children": [],
         "isRemovable": true,
         "filePath": "Test_Frankfurt/lambda.js",
-        "code": "let AWS = require('aws-sdk');\nconst sns = new AWS.SNS();\nconst s3 = new AWS.S3();\nconst kinesis = new AWS.Kinesis();\nconst cognito_idp = new AWS.CognitoIdentityServiceProvider();\n\nexports.handler = function (event, context, callback) {\n    cognito_idp.listUsers({\n        UserPoolId: process.env.UserPoolId_cognitoCognitoFrankfurt1,\n        Limit: \"10\"\n    }, function (error, data) {\n        if (error) {\n            // implement error handling logic here\n            throw error;\n        }\n        // your logic goes within this block\n        console.log(data);\n\n        kinesis.describeStream({\n            StreamName: 'Test_Frankfurt',\n            Limit: 10,\n            ExclusiveStartShardId: 'shardId-000000000000'\n        }).promise()\n            .then(data => {\n                // your logic goes here\n                console.log(data);\n            })\n            .catch(err => {\n                // error handling goes here\n                console.log(err);\n            });\n    });\n    s3.listObjects({\n        'Bucket': 'cf-templates-8j7s4hdepmkt-us-east-1',\n        'MaxKeys': 10,\n        'Prefix': ''\n    }).promise()\n        .then(data => {\n            console.log(data);           // successful response\n            /*\n            data = {\n             Contents: [\n                {\n                   ETag: \"\\\\\"70ee1738b6b21e2c8a43f3a5ab0eee71\\\\\"\",\n                   Key: \"example1.jpg\",\n                   LastModified: <Date Representation>,\n                   Owner: {\n                      DisplayName: \"myname\",\n                      ID: \"12345example25102679df27bb0ae12b3f85be6f290b936c4393484be31bebcc\"\n                   },\n                   Size: 11,\n                   StorageClass: \"STANDARD\"\n                },\n                {...}\n            */\n        })\n        .catch(err => {\n            console.log(err, err.stack); // an error occurred\n        });\n    sns.listSubscriptionsByTopic({\n        TopicArn: 'arn:aws:sns:eu-central-1:318300609668:Test_Frankfurt'\n    }).promise()\n        .then(data => {\n            // your code goes here\n            console.log(data);\n        })\n        .catch(err => {\n            // error handling goes here\n            console.log(err);\n        });\n\n    callback(null, { \"message\": \"Successfully executed\" });\n}",
+        "code": "let AWS = require('aws-sdk');\nlet SL_AWS = require('slappforge-sdk-aws');\nconst sqs = new SL_AWS.SQS(AWS);\nconst sns = new AWS.SNS();\nconst s3 = new AWS.S3();\nconst kinesis = new AWS.Kinesis();\nconst cognito_idp = new AWS.CognitoIdentityServiceProvider();\n\nexports.handler = function (event, context, callback) {\n    cognito_idp.listUsers({\n        UserPoolId: process.env.UserPoolId_cognitoCognitoFrankfurt1,\n        Limit: \"10\"\n    }, function (error, data) {\n        if (error) {\n            // implement error handling logic here\n            throw error;\n        }\n        // your logic goes within this block\n        console.log(data);\n\n        kinesis.describeStream({\n            StreamName: 'Test_Frankfurt',\n            Limit: 10,\n            ExclusiveStartShardId: 'shardId-000000000000'\n        }).promise()\n            .then(data => {\n                // your logic goes here\n                console.log(data);\n            })\n            .catch(err => {\n                // error handling goes here\n                console.log(err);\n            });\n    });\n    s3.listObjects({\n        'Bucket': 'cf-templates-8j7s4hdepmkt-us-east-1',\n        'MaxKeys': 10,\n        'Prefix': ''\n    }).promise()\n        .then(data => {\n            console.log(data);           // successful response\n            /*\n            data = {\n             Contents: [\n                {\n                   ETag: \"\\\\\"70ee1738b6b21e2c8a43f3a5ab0eee71\\\\\"\",\n                   Key: \"example1.jpg\",\n                   LastModified: <Date Representation>,\n                   Owner: {\n                      DisplayName: \"myname\",\n                      ID: \"12345example25102679df27bb0ae12b3f85be6f290b936c4393484be31bebcc\"\n                   },\n                   Size: 11,\n                   StorageClass: \"STANDARD\"\n                },\n                {...}\n            */\n        })\n        .catch(err => {\n            console.log(err, err.stack); // an error occurred\n        });\n    sns.listSubscriptionsByTopic({\n        TopicArn: 'arn:aws:sns:eu-central-1:318300609668:Test_Frankfurt'\n    }).promise()\n        .then(data => {\n            // your code goes here\n            console.log(data);\n        })\n        .catch(err => {\n            // error handling goes here\n            console.log(err);\n        });\n    sqs.receiveMessage({\n        QueueUrl: 'https://sqs.eu-central-1.amazonaws.com/318300609668/Test_Frankfurt',\n        AttributeNames: ['All'],\n        MaxNumberOfMessages: '1',\n        VisibilityTimeout: '30',\n        WaitTimeSeconds: '0'\n    }).promise()\n        .then(receivedMsgData => {\n            if (!!(receivedMsgData) && !!(receivedMsgData.Messages)) {\n                let receivedMessages = receivedMsgData.Messages;\n                receivedMessages.forEach(message => {\n                    // your logic to access each message through out the loop. Each message is available under variable message \n                    // within this block\n                });\n            } else {\n                // No messages to process\n            }\n        })\n        .catch(err => {\n            // error handling goes here\n            console.log(err);\n        });\n\n    callback(null, { \"message\": \"Successfully executed\" });\n}",
         "triggers": [
           {
             "resourceName": "apigeuCentral1APIFrankfurt1testany",
@@ -284,6 +284,35 @@
           "subscriptions": []
         },
         "globallyEditable": true
+      },
+      "sqseuCentral1TestFrankfurt": {
+        "name": "sqseuCentral1TestFrankfurt",
+        "type": "SQS",
+        "config": {
+          "mode": 0,
+          "existing": false,
+          "name": "Test_Frankfurt",
+          "url": "https://sqs.eu-central-1.amazonaws.com/318300609668/Test_Frankfurt",
+          "selectedRegion": "eu-central-1",
+          "deliveryDelay": 0,
+          "deliveryDelayUnit": "seconds",
+          "useRedrivePolicy": false,
+          "useSSE": false,
+          "kmsCustomerMasterKey": "default",
+          "accountId": "318300609668",
+          "dataKeyReusePeriod": 5,
+          "queueType": "standardQueue",
+          "defaultVisibilityTimeout": 30,
+          "defaultVisibilityTimeoutUnit": "seconds",
+          "messageRetentionPeriod": 4,
+          "messageRetentionPeriodUnit": "days",
+          "maximumMessageSize": 256,
+          "receiveMessageWaitTime": 0,
+          "deadLetterQueueName": "",
+          "contentBasedDeduplication": false,
+          "operation": 0
+        },
+        "globallyEditable": true
       }
     },
     "envVariables": [
@@ -297,7 +326,13 @@
       }
     ],
     "packageJSON": {
-      "dependencies": {}
+      "dependencies": {
+        "slappforge-sdk-aws": {
+          "name": "slappforge-sdk-aws",
+          "version": "0.0.5",
+          "notRemovable": false
+        }
+      }
     },
     "lambdaId": "8f17496a-7561-445f-89db-e785a9068fce"
   },
@@ -310,7 +345,7 @@
     "repoUrl": "",
     "platform": "AWS",
     "platformRegions": {},
-    "lastSave": 1548325585069
+    "lastSave": 1548325944102
   },
   "VCS_STATE": {
     "provider": "GitHub",
