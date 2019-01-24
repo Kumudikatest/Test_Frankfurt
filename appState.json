@@ -22,7 +22,7 @@
         "children": [],
         "isRemovable": true,
         "filePath": "Test_Frankfurt/lambda.js",
-        "code": "let AWS = require('aws-sdk');\nconst kinesis = new AWS.Kinesis();\nconst cognito_idp = new AWS.CognitoIdentityServiceProvider();\n\nexports.handler = function (event, context, callback) {\n    cognito_idp.listUsers({\n        UserPoolId: process.env.UserPoolId_cognitoCognitoFrankfurt1,\n        Limit: \"10\"\n    }, function (error, data) {\n        if (error) {\n            // implement error handling logic here\n            throw error;\n        }\n        // your logic goes within this block\n        console.log(data);\n\n        kinesis.describeStream({\n            StreamName: 'Test_Frankfurt',\n            Limit: 10,\n            ExclusiveStartShardId: 'shardId-000000000000'\n        }).promise()\n            .then(data => {\n                // your logic goes here\n                console.log(data);\n            })\n            .catch(err => {\n                // error handling goes here\n                console.log(err);\n            });\n    });\n\n    callback(null, { \"message\": \"Successfully executed\" });\n}",
+        "code": "let AWS = require('aws-sdk');\nconst sns = new AWS.SNS();\nconst s3 = new AWS.S3();\nconst kinesis = new AWS.Kinesis();\nconst cognito_idp = new AWS.CognitoIdentityServiceProvider();\n\nexports.handler = function (event, context, callback) {\n    cognito_idp.listUsers({\n        UserPoolId: process.env.UserPoolId_cognitoCognitoFrankfurt1,\n        Limit: \"10\"\n    }, function (error, data) {\n        if (error) {\n            // implement error handling logic here\n            throw error;\n        }\n        // your logic goes within this block\n        console.log(data);\n\n        kinesis.describeStream({\n            StreamName: 'Test_Frankfurt',\n            Limit: 10,\n            ExclusiveStartShardId: 'shardId-000000000000'\n        }).promise()\n            .then(data => {\n                // your logic goes here\n                console.log(data);\n            })\n            .catch(err => {\n                // error handling goes here\n                console.log(err);\n            });\n    });\n    s3.listObjects({\n        'Bucket': 'cf-templates-8j7s4hdepmkt-us-east-1',\n        'MaxKeys': 10,\n        'Prefix': ''\n    }).promise()\n        .then(data => {\n            console.log(data);           // successful response\n            /*\n            data = {\n             Contents: [\n                {\n                   ETag: \"\\\\\"70ee1738b6b21e2c8a43f3a5ab0eee71\\\\\"\",\n                   Key: \"example1.jpg\",\n                   LastModified: <Date Representation>,\n                   Owner: {\n                      DisplayName: \"myname\",\n                      ID: \"12345example25102679df27bb0ae12b3f85be6f290b936c4393484be31bebcc\"\n                   },\n                   Size: 11,\n                   StorageClass: \"STANDARD\"\n                },\n                {...}\n            */\n        })\n        .catch(err => {\n            console.log(err, err.stack); // an error occurred\n        });\n    sns.listSubscriptionsByTopic({\n        TopicArn: 'arn:aws:sns:eu-central-1:318300609668:Test_Frankfurt'\n    }).promise()\n        .then(data => {\n            // your code goes here\n            console.log(data);\n        })\n        .catch(err => {\n            // error handling goes here\n            console.log(err);\n        });\n\n    callback(null, { \"message\": \"Successfully executed\" });\n}",
         "triggers": [
           {
             "resourceName": "apigeuCentral1APIFrankfurt1testany",
@@ -258,6 +258,32 @@
           "operation": "describe-stream"
         },
         "globallyEditable": true
+      },
+      "s3cfTemplates8j7s4hdepmktUsEast1": {
+        "name": "s3cfTemplates8j7s4hdepmktUsEast1",
+        "type": "S3",
+        "config": {
+          "mode": 1,
+          "bucket": {
+            "region": "eu-central-1",
+            "name": "cf-templates-8j7s4hdepmkt-us-east-1"
+          }
+        },
+        "globallyEditable": false
+      },
+      "snseuCentral1TestFrankfurt": {
+        "name": "snseuCentral1TestFrankfurt",
+        "type": "SNS",
+        "config": {
+          "topicMode": 0,
+          "topicName": "Test_Frankfurt",
+          "topicArn": "arn:aws:sns:eu-central-1:318300609668:Test_Frankfurt",
+          "topicRegion": "eu-central-1",
+          "snsType": 0,
+          "topicDisplayName": "Test_Frank",
+          "subscriptions": []
+        },
+        "globallyEditable": true
       }
     },
     "envVariables": [
@@ -280,9 +306,11 @@
     "projectDescription": "Region = Frankfurt",
     "projectVersion": "2.0.0",
     "projectRegion": "eu-central-1",
+    "repoName": "test",
+    "repoUrl": "",
     "platform": "AWS",
     "platformRegions": {},
-    "lastSave": 1547184407212
+    "lastSave": 1548325585069
   },
   "VCS_STATE": {
     "provider": "GitHub",
